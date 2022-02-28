@@ -1,14 +1,15 @@
-from fastapi import FastAPI
-from app.database import Base, engine, SessionLocal
-
 from typing import List
-from fastapi import status, HTTPException, Depends
+
+from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
+
 import app.models as models
 import app.schemas as schemas
+from app.database import Base, SessionLocal, engine
 
 Base.metadata.create_all(engine)
 app = FastAPI()
+
 
 def get_session():
     session = SessionLocal()
@@ -20,7 +21,7 @@ def get_session():
 
 @app.post("/task", response_model=schemas.Task, status_code=status.HTTP_201_CREATED)
 def create_task(task: schemas.TaskCreate, session: Session = Depends(get_session)):
-    taskdb = models.Task(task = task.task)
+    taskdb = models.Task(task=task.task)
     taskdb.completed = False
 
     session.add(taskdb)
@@ -29,14 +30,19 @@ def create_task(task: schemas.TaskCreate, session: Session = Depends(get_session
 
     return taskdb
 
+
 @app.get("/task/{id}", response_model=schemas.Task)
 def read_task(id: int, session: Session = Depends(get_session)):
     task = session.query(models.Task).get(id)
 
     if not task:
-        raise HTTPException(status_code=404, detail=f"Item with id {id} not found")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Item with id {id} not found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+        )
 
     return task
+
 
 @app.put("/task/{id}", response_model=schemas.Task)
 def update_task(id: int, name: str, completed: bool, session: Session = Depends(get_session)):
@@ -52,6 +58,7 @@ def update_task(id: int, name: str, completed: bool, session: Session = Depends(
 
     return task
 
+
 @app.delete("/task/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(id: int, session: Session = Depends(get_session)):
     task = session.query(models.Task).get(id)
@@ -63,7 +70,8 @@ def delete_task(id: int, session: Session = Depends(get_session)):
 
     return None
 
-@app.get("/task", response_model = List[schemas.Task])
+
+@app.get("/task", response_model=List[schemas.Task])
 def read_task_list(session: Session = Depends(get_session)):
     task_list = session.query(models.Task).all()
 
