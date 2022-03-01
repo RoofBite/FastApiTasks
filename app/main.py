@@ -1,5 +1,6 @@
 from typing import List
 
+from exceptions import ITEM_NOT_FOUND
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -21,7 +22,7 @@ def get_session():
 
 @app.post("/task", response_model=schemas.Task, status_code=status.HTTP_201_CREATED)
 def create_task(task: schemas.TaskCreate, session: Session = Depends(get_session)):
-    taskdb = models.Task(task=task.task)
+    taskdb = models.Task(name=task.name)
     taskdb.completed = False
 
     session.add(taskdb)
@@ -36,10 +37,7 @@ def read_task(id: int, session: Session = Depends(get_session)):
     task = session.query(models.Task).get(id)
 
     if not task:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Item with id {id} not found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        )
+        raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND.format(id=str(id)))
 
     return task
 
@@ -54,7 +52,7 @@ def update_task(id: int, name: str, completed: bool, session: Session = Depends(
         session.commit()
 
     if not task:
-        raise HTTPException(status_code=404, detail=f"Item with id: {id} not found")
+        raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND.format(id=str(id)))
 
     return task
 
@@ -66,7 +64,7 @@ def delete_task(id: int, session: Session = Depends(get_session)):
         session.delete(task)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail=f"Item with id {id} not found")
+        raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND.format(id=str(id)))
 
     return None
 
