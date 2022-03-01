@@ -1,12 +1,12 @@
 from typing import List
 
-from exceptions import ITEM_NOT_FOUND
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
 import app.models as models
 import app.schemas as schemas
 from app.database import Base, SessionLocal, engine
+from app.exceptions import ITEM_NOT_FOUND
 
 Base.metadata.create_all(engine)
 app = FastAPI()
