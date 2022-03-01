@@ -38,7 +38,7 @@ def read_task(id: int, session: Session = Depends(get_session)):
     if not task:
         raise HTTPException(
             status_code=404,
-            detail=f"Item with id {id} not found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+            detail=f"Item with id {id} not found",
         )
 
     return task
