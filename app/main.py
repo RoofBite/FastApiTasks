@@ -1,5 +1,6 @@
 from typing import List
 
+from exceptions import ITEM_NOT_FOUND
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
