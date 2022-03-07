@@ -1,13 +1,12 @@
 from typing import List
 
-from exceptions import ITEM_NOT_FOUND
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
 import app.models as models
 import app.schemas as schemas
 from app.database import Base, SessionLocal, engine
-from app.exceptions import ITEM_NOT_FOUND
+from app.exceptions import ITEM_NOT_FOUND, USER_NOT_FOUND
 
 Base.metadata.create_all(engine)
 app = FastAPI()
@@ -21,9 +20,26 @@ def get_session():
         session.close()
 
 
+@app.post("/user", response_model=schemas.UserCreate, status_code=status.HTTP_201_CREATED)
+def create_user(user: schemas.UserCreate, session: Session = Depends(get_session)):
+    userdb = models.User(is_active=user.is_active, hashed_password=user.hashed_password)
+
+    session.add(userdb)
+    session.commit()
+    session.refresh(userdb)
+
+    return userdb
+
+
 @app.post("/task", response_model=schemas.Task, status_code=status.HTTP_201_CREATED)
 def create_task(task: schemas.TaskCreate, session: Session = Depends(get_session)):
-    taskdb = models.Task(name=task.name)
+    taskdb = models.Task(name=task.name, creator_id=task.creator_id)
+
+    if session.query(models.User).filter(models.User.id == task.creator_id).first():
+        taskdb.creator_id = task.creator_id
+    else:
+        raise HTTPException(status_code=404, detail=USER_NOT_FOUND.format(id=str(id)))
+
     taskdb.completed = False
 
     session.add(taskdb)
