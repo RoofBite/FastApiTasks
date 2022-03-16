@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
+import pytest
 from app.database import Base, get_session
 from app.main import app
 
@@ -10,9 +10,10 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
+client = TestClient(app)
 
 def override_get_db():
     try:
@@ -24,63 +25,72 @@ def override_get_db():
 
 app.dependency_overrides[get_session] = override_get_db
 
-client = TestClient(app)
+
+class TestTask:
+    @pytest.fixture(autouse=True)
+    def init(self):
+        self.user_create = client.post("/user", json={"hashed_password": "string", "is_active": True})
+        self.user_data = self.user_create.json()
+    @pytest.fixture()
+    def test_db(self):
+        Base.metadata.create_all(bind=engine)
+        yield
+        Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
+    @pytest.fixture()
+    def create_task(self):
+        self.task_create = client.post(
+            "/task",
+            json={"name": "string", "creator_id": self.user_data["id"]},
+        )
+        self.task_data = self.task_create.json()
 
 
-def test_create_task_ok():
-    response = client.post("/user", json={"hashed_password": "string", "is_active": True})
+    def test_create_task_ok(self, test_db):
+        task = {"name": "string3", "creator_id": self.user_data["id"]}
 
-    data = response.json()
-    assert "id" in data
-    task = {"name": "string", "creator_id": data["id"]}
-
-    response = client.post(
-        "/task",
-        json=task,
-    )
-    data = response.json()
-    import logging
-
-    logging.error(data)
-    assert response.status_code == 201, response.text
+        response = client.post(
+            "/task",
+            json=task,
+        )
+        data = response.json()
+        assert response.status_code == 201, response.text
+        assert data["name"] == "string3"
+        assert data["creator_id"] == self.user_data["id"]
 
 
-def test_read_task_ok():
-    response = client.post("/user", json={"hashed_password": "string", "is_active": True})
+    def test_read_task_ok(self, test_db, create_task):
+        response = client.get(f'/task/{self.task_data["id"]}')
+        data = response.json()
 
-    data = response.json()
-    import logging
-
-    logging.error(data)
-    assert "id" in data
-    response = client.get(f"/task/1")
-    assert response.status_code == 200, response.text
+        assert response.status_code == 200, response.text
 
 
-def test_read_tasks_ok():
-    client.post("/user", json={"hashed_password": "string", "is_active": True})
-
-    response = client.get(f"/task")
-    assert response.status_code == 200, response.text
+    def test_read_tasks_ok(self, test_db):
+        response = client.get(f"/task")
+        assert response.status_code == 200, response.text
 
 
-def test_upadte_task_ok():
-    response = client.post("/user", json={"hashed_password": "string", "is_active": True})
+    def test_upadte_task_ok(self, test_db, create_task):
 
-    data = response.json()
-    assert "id" in data
-    task = {"name": "string", "creator_id": data["id"]}
-    client.post(
-        "/task",
-        json=task,
-    )
+        task_update = {
+            "name": "string_update",
+            "completed": True
+            }
+        response = client.put(
+            f'/task/{self.task_data["id"]}',
+            params=task_update,
+        )
+        data = response.json()
 
-    task_update = {"name": "string_update", "creator_id": data["id"]}
+        assert response.status_code == 200, response.text
+        assert data["name"] == "string_update"
+        assert data["creator_id"] == self.user_data["id"]
+    
+    def test_delete_task_ok(self, test_db, create_task):
+        response = client.delete(
+            f'/task/{self.task_data["id"]}',
+        )
 
-    response = client.put(
-        "/task/1",
-        json=task_update,
-    )
-    data = response.json()
-    assert response.status_code == 204, response.text
-    assert data["name"] == "string_update"
+        assert response.status_code == 204, response.text
+
