@@ -22,6 +22,7 @@ class Task(BaseModel):
     id: int
     name: str
     completed: bool
+    creator_id: int
 
     class Config:
         orm_mode = True
