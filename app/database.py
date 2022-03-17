@@ -11,14 +11,14 @@ class DatebaseSetup:
 
     @staticmethod
     def dev_datebase():
-        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5432/test"
+        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5432/dev_database"
         engine = create_engine(SQLALCHEMY_DATABASE_URL)
         SessionLocal = sessionmaker(bind=engine)
         return DatebaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
 
     @staticmethod
     def test_datebase():
-        SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5433/test_datebase"
         engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         return DatebaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
