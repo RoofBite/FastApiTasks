@@ -3,28 +3,28 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-class DatebaseSetup:
+class DatabaseSetup:
     def __init__(self, SQLALCHEMY_DATABASE_URL, engine, SessionLocal):
         self.SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL
         self.engine = engine
         self.SessionLocal = SessionLocal
 
     @staticmethod
-    def dev_datebase():
+    def dev_database():
         SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5432/dev_database"
         engine = create_engine(SQLALCHEMY_DATABASE_URL)
         SessionLocal = sessionmaker(bind=engine)
-        return DatebaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
+        return DatabaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
 
     @staticmethod
-    def test_datebase():
-        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5433/test_datebase"
+    def test_database():
+        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5433/test_database"
         engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        return DatebaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
+        return DatabaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
 
 
-db_version = DatebaseSetup.dev_datebase()
+db_version = DatabaseSetup.dev_database()
 
 Base = declarative_base()
 

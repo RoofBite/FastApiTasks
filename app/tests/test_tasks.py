@@ -1,10 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app.database import Base, DatebaseSetup, db_version, get_session
+from app.database import Base, DatabaseSetup, db_version, get_session
 from app.main import app
 
-db_version = DatebaseSetup.dev_datebase()
+db_version = DatabaseSetup.dev_database()
 
 Base.metadata.drop_all(bind=db_version.engine)
 Base.metadata.create_all(bind=db_version.engine)
