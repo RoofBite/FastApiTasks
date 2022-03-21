@@ -9,6 +9,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER_TESTS}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_TESTS}
       - POSTGRES_DB=${POSTGRES_DB_TESTS}
+      - POSTGRES_SERVER=tests
     expose:
       - 5432
     ports:

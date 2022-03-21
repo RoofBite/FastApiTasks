@@ -18,7 +18,7 @@ class DatabaseSetup:
 
     @staticmethod
     def test_database():
-        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@db:5433/test_database"
+        SQLALCHEMY_DATABASE_URL = "postgresql://username:password@tests:5433/test_database"
         engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         return DatabaseSetup(SQLALCHEMY_DATABASE_URL, engine, SessionLocal)
@@ -28,7 +28,7 @@ db_version = DatabaseSetup.dev_database()
 
 Base = declarative_base()
 
-# Base.metadata.create_all(db_version.engine)
+Base.metadata.create_all(db_version.engine)
 
 
 def get_session():
