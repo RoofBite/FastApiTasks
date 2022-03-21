@@ -28,7 +28,7 @@ db_version = DatebaseSetup.dev_datebase()
 
 Base = declarative_base()
 
-Base.metadata.create_all(db_version.engine)
+# Base.metadata.create_all(db_version.engine)
 
 
 def get_session():

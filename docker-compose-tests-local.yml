@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_TESTS}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_TESTS}
+      - POSTGRES_DB=${POSTGRES_DB_TESTS}
+    expose:
+      - 5432
+    ports:
+        - "6543:5432"
+
+  app:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/usr/src/personalised_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - PYTHONUNBUFFERED=1
+
+
+volumes:
+  postgres_data:

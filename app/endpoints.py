@@ -5,9 +5,10 @@ from sqlalchemy.orm import Session
 
 import app.models as models
 import app.schemas as schemas
-from app.database import get_session
+from app.database import Base, db_version, get_session
 from app.exceptions import ITEM_NOT_FOUND, USER_NOT_FOUND
 
+Base.metadata.create_all(db_version.engine)
 router = APIRouter()
 
 
