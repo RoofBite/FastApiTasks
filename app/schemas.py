@@ -14,9 +14,6 @@ class TaskCreate(BaseModel):
     name: str
     creator_id: int
 
-    class Config:
-        arbitrary_types_allowed = True
-
 
 class Task(BaseModel):
     id: int
