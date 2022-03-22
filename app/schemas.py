@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class UserCreate(BaseModel):
-    id: int = None
+    # id: int = None
     hashed_password: str
     is_active: bool
 

@@ -12,6 +12,7 @@ services:
       - db
     environment:
       - PYTHONUNBUFFERED=1
+    restart: on-failure
 
   db:
     image: postgres:12.0-alpine
