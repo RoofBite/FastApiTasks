@@ -21,7 +21,7 @@ services:
     environment:
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=test
+      - POSTGRES_DB=dev_database
     expose:
       - 5432
     ports:
