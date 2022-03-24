@@ -1,20 +1,21 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import sessionmaker
 
-from app.database import Base, DatabaseSetup, db_version, get_session
+from app.database import Base, engine, get_session
 from app.main import app
 
-db_version = DatabaseSetup.dev_database()
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base.metadata.drop_all(bind=db_version.engine)
-Base.metadata.create_all(bind=db_version.engine)
+Base.metadata.drop_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 client = TestClient(app)
 
 
 def override_get_db():
     try:
-        db = db_version.SessionLocal()
+        db = TestingSessionLocal()
         yield db
     finally:
         db.close()
@@ -31,10 +32,10 @@ class TestTask:
 
     @pytest.fixture()
     def test_db(self):
-        Base.metadata.create_all(bind=db_version.engine)
+        Base.metadata.create_all(bind=engine)
         yield
-        Base.metadata.drop_all(bind=db_version.engine)
-        Base.metadata.create_all(bind=db_version.engine)
+        Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
     @pytest.fixture()
     def create_task(self):

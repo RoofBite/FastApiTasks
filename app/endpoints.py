@@ -12,7 +12,7 @@ Base.metadata.create_all(db_version.engine)
 router = APIRouter()
 
 
-@router.post("/user", response_model=schemas.UserCreate, status_code=status.HTTP_201_CREATED)
+@router.post("/user", response_model=schemas.UserCreateOut, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, session: Session = Depends(get_session)):
     userdb = models.User(is_active=user.is_active, hashed_password=user.hashed_password)
 

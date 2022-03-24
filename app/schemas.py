@@ -9,6 +9,15 @@ class UserCreate(BaseModel):
         orm_mode = True
 
 
+class UserCreateOut(BaseModel):
+    id: int = None
+    hashed_password: str
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
 class TaskCreate(BaseModel):
     name: str
     creator_id: int
