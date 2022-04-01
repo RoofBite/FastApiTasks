@@ -5,17 +5,23 @@ from sqlalchemy.orm import Session
 
 import app.models as models
 import app.schemas as schemas
-from app.database import Base, engine, get_session
+from app.database import SessionLocal
 from app.exceptions import ITEM_NOT_FOUND, USER_NOT_FOUND
 
-Base.metadata.create_all(engine)
 router = APIRouter()
+
+
+def get_session():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 @router.post("/user", response_model=schemas.UserCreateOut, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, session: Session = Depends(get_session)):
     userdb = models.User(is_active=user.is_active, hashed_password=user.hashed_password)
-
     session.add(userdb)
     session.commit()
     session.refresh(userdb)
