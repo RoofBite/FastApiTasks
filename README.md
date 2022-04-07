@@ -1,18 +1,18 @@
 FastApi Tasks Project
 
-##Technologies: <br>
+## Technologies: <br>
 -Python 3.9.10
 -FastAPI 0.71.0
 -Postgresql 12
 
-##Installation
+## Installation
 
 -git clone https://github.com/RoofBite/FastApiTasks.git
 -cd FastApiTasks
 
 **How to run project with docker-compose:<br>**
 -Rename .env_example file to .env
-##Go to project root directory and run command:
+## Go to project root directory and run command:
 -make run-app
 - Go to http://0.0.0.0:8000/docs in browser
 
