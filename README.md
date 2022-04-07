@@ -22,7 +22,7 @@ When app is running run in terminal:<br>
 
 Copy CONTAINER ID for IMAGE: fastapitasks_app<br>
 Run in teminal command:<br>
--docker exec -it {CONTAINER ID} /bin/sh        #Example -> docker exec -it e26313fcd1c7 /bin/sh. <br>
+-docker exec -it {CONTAINER ID} /bin/sh   &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp     #Example -> docker exec -it e26313fcd1c7 /bin/sh. <br>
 Write in terminal: <br>
 -pytest
 
