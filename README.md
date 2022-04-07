@@ -16,7 +16,7 @@ FastApi Tasks Project
 -make run-app <br>
 - Go to http://0.0.0.0:8000/docs in browser <br>
 
-**To run test:<br>**
+## To run test:<br>
 When app is running run in terminal:<br>
 -docker ps <br>
 
