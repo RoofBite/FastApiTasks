@@ -10,9 +10,9 @@ FastApi Tasks Project
 -git clone https://github.com/RoofBite/FastApiTasks.git <br>
 -cd FastApiTasks <br>
 
-**How to run project with docker-compose:<br>**
+## How to run project with docker-compose:<br>
 -Rename .env_example file to .env <br>
-## Go to project root directory and run command: <br>
+** Go to project root directory and run command:** <br>
 -make run-app <br>
 - Go to http://0.0.0.0:8000/docs in browser <br>
 
