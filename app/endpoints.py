@@ -29,6 +29,13 @@ def create_user(user: schemas.UserCreate, session: Session = Depends(get_session
     return userdb
 
 
+@router.get("/search/", response_model=List[schemas.Task], status_code=status.HTTP_200_OK)
+def search(name=str, session: Session = Depends(get_session)):
+    name_query = session.query(models.Task).filter(models.Task.name == name).all()
+
+    return name_query
+
+
 @router.post("/task", response_model=schemas.Task, status_code=status.HTTP_201_CREATED)
 def create_task(task: schemas.TaskCreate, session: Session = Depends(get_session)):
     taskdb = models.Task(name=task.name, creator_id=task.creator_id)
