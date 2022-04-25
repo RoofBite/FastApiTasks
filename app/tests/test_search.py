@@ -47,9 +47,9 @@ class TestSearch:
         assert response.status_code == 200
         assert response.json() == [self.task_data]
 
-    def test_get_all_tasks_with_name(self, db_session, create_task):
+    def test_get_all_tasks_with_name_not_completed(self, db_session, create_task):
         name = "Learn TDDX"
-        response = client.get(f"/search/?name={name}")
+        response = client.get(f"/search/?name={name}&partial={False}")
         assert response.status_code == 200
 
         assert response.json() == [self.task_data3, self.task_data4]
@@ -58,6 +58,21 @@ class TestSearch:
         name = "Learn"
         # we have Learn and Learn TDD tasks
         response = client.get(f"/search/?name={name}&partial={True}")
+
+        assert response.status_code == 200
+        assert response.json() == [self.task_data, self.task_data3, self.task_data4, self.task_data2]
+
+    def test_get_all_tasks_with_name(self, db_session, create_task):
+        name = "Learn TDDX"
+        response = client.get(f"/search/?name={name}")
+        assert response.status_code == 200
+
+        assert response.json() == [self.task_data3, self.task_data4]
+
+    def test_get_tasks_with_partial_name_not_completed(self, db_session, create_task):
+        name = "Learn"
+        # we have Learn and Learn TDD tasks
+        response = client.get(f"/search/?name={name}&partial={False}")
 
         assert response.status_code == 200
         assert response.json() == [self.task_data, self.task_data3, self.task_data4, self.task_data2]

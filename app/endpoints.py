@@ -30,11 +30,24 @@ def create_user(user: schemas.UserCreate, session: Session = Depends(get_session
 
 
 @router.get("/search", response_model=List[schemas.Task], status_code=status.HTTP_200_OK)
-def search(name: str, partial: bool = False, session: Session = Depends(get_session)):
+def search(name: str, completed: bool = None, partial: bool = False, session: Session = Depends(get_session)):
+    query = session.query(models.Task)
+    filters = []
+
+    if completed is not None:
+        filter_completed = models.Task.completed == completed
+        filters.append(filter_completed)
+
     if partial:
-        name_query = session.query(models.Task).filter(models.Task.name.contains(name)).all()
+        filter_name = models.Task.name.contains(name)
+        filters.append(filter_name)
+        name_query = query.filter(*filters)
     else:
-        name_query = session.query(models.Task).filter(models.Task.name == name).all()
+        filter_name = models.Task.name == name
+        filters.append(filter_name)
+        name_query = query.filter(*filters)
+
+    name_query = name_query.all()
     return name_query
 
 
