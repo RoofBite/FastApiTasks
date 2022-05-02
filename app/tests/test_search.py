@@ -49,7 +49,7 @@ class TestSearch:
 
     def test_get_all_tasks_with_name_not_completed(self, db_session, create_task):
         name = "Learn TDDX"
-        response = client.get(f"/search/?name={name}&partial={False}")
+        response = client.get(f"/search/?name={name}&completed={False}")
         assert response.status_code == 200
 
         assert response.json() == [self.task_data3, self.task_data4]
@@ -72,7 +72,7 @@ class TestSearch:
     def test_get_tasks_with_partial_name_not_completed(self, db_session, create_task):
         name = "Learn"
         # we have Learn and Learn TDD tasks
-        response = client.get(f"/search/?name={name}&partial={False}")
+        response = client.get(f"/search/?name={name}&partial={True}&completed={False}")
 
         assert response.status_code == 200
         assert response.json() == [self.task_data, self.task_data3, self.task_data4, self.task_data2]
